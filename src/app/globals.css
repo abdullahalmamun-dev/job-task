@@ -1,0 +1,56 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #F1EBE3;
+  --foreground: #1a1a1a;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: var(--font-plus-jakarta-sans), sans-serif;
+  overflow-x: hidden;
+}
+
+@layer components {
+  .btn-swoosh {
+    @apply relative overflow-hidden px-6 py-3 rounded-full font-semibold transition-all duration-300 border border-current;
+  }
+  
+  .btn-swoosh::before {
+    content: '';
+    @apply absolute top-0 left-[-100%] w-full h-full transition-all duration-500 z-[-1];
+    background: currentColor;
+  }
+  
+  .btn-swoosh:hover {
+    @apply text-white;
+  }
+  
+  .btn-swoosh:hover::before {
+    @apply left-0;
+  }
+}
+
+/* Custom styles for GSAP animations */
+.stack-card {
+  will-change: transform, opacity;
+}
+
+.lenis.lenis-smooth {
+  height: auto;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
