@@ -3,70 +3,81 @@
 import React, { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 gsap.registerPlugin(ScrollTrigger);
 
 const expertiseData = [
   {
-    id: 1,
+    id: "01",
     title: "Strategy",
-    description: "We define your roadmap to scale. From market research to full-funnel strategy, we build the foundation for your growth.",
+    subtitle: "Inzichten die impact maken.",
+    description: "We duiken in de cijfers om te snappen wat écht werkt. En sturen jouw content scherp bij.",
     color: "bg-[#2D5BFF]",
     textColor: "text-white",
-    icon: "📊",
+    imageUrl: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=800",
   },
   {
-    id: 2,
+    id: "02",
     title: "Creative",
-    description: "High-end content that converts. We produce visuals that match your brand's ambition and speak to your target audience.",
+    subtitle: "Content die blijft plakken.",
+    description: "Wij creëren visuals die niet alleen mooi zijn, maar ook converteren naar resultaat.",
     color: "bg-[#EBACDA]",
     textColor: "text-black",
-    icon: "🎨",
+    imageUrl: "https://images.unsplash.com/photo-1558655146-d09347e92766?auto=format&fit=crop&q=80&w=800",
   },
   {
-    id: 3,
+    id: "03",
     title: "Media",
-    description: "Performance-driven distribution. We scale your brand through paid social, search, and programmatic media buying.",
-    color: "#36B37E",
+    subtitle: "Bereik de juiste mensen.",
+    description: "Met slimme distributie zorgen we dat jouw boodschap exact daar komt waar het telt.",
+    color: "bg-[#36B37E]",
     textColor: "text-white",
-    customBg: { backgroundColor: "#36B37E" },
-    icon: "🚀",
+    imageUrl: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=800",
+  },
+  {
+    id: "04",
+    title: "Data",
+    subtitle: "Inzichten die impact maken.",
+    description: "We duiken in de cijfers om te snappen wat écht werkt. En sturen jouw content scherp bij.",
+    color: "bg-[#0081FF]", // Specific blue from your image
+    textColor: "text-white",
+    imageUrl: "https://images.unsplash.com/photo-1504868584819-f8e90526ef7d?auto=format&fit=crop&q=80&w=800",
   },
 ];
 
 const Expertise = () => {
-  const sectionRef = useRef(null);
-  const triggerRef = useRef(null);
+  const containerRef = useRef(null);
 
   useEffect(() => {
     const cards = gsap.utils.toArray(".expertise-card");
     
-    // Stacking effect
     cards.forEach((card: any, index: number) => {
-      // Don't animate the last card as it doesn't need to be covered
-      if (index === cards.length - 1) return;
+      // Logic for stacking: Pin every card except the last one
+      if (index !== cards.length - 1) {
+        ScrollTrigger.create({
+          trigger: card,
+          start: "top 5%",
+          pin: true,
+          pinSpacing: false,
+          endTrigger: containerRef.current,
+          end: "bottom bottom",
+        });
+      }
 
-      ScrollTrigger.create({
-        trigger: card,
-        start: "top 100px",
-        pin: true,
-        pinSpacing: false,
-        endTrigger: triggerRef.current,
-        end: "bottom bottom",
-      });
-
-      // Optional: Add scale and dim effect to the card being covered
-      gsap.to(card, {
-        scale: 0.9,
-        opacity: 0.5,
-        scrollTrigger: {
-          trigger: cards[index + 1] as any,
-          start: "top 80%",
-          end: "top 100px",
-          scrub: true,
-        }
-      });
+      // Logic for dimming/scaling the card underneath as the next one scrolls over
+      if (index < cards.length - 1) {
+        gsap.to(card, {
+          scale: 0.9,
+          opacity: 0.5,
+          scrollTrigger: {
+            trigger: cards[index + 1] as any,
+            start: "top 80%",
+            end: "top 5%",
+            scrub: true,
+          }
+        });
+      }
     });
 
     return () => {
@@ -75,49 +86,62 @@ const Expertise = () => {
   }, []);
 
   return (
-    <section 
-      ref={sectionRef} 
-      id="expertise"
-      className="relative py-20 px-6 bg-background min-h-screen"
-    >
-      <div className="max-w-7xl mx-auto mb-20">
-        <h2 className="text-sm font-bold uppercase tracking-widest text-primary-pink mb-4">What we do</h2>
-        <h3 className="text-4xl md:text-6xl font-bold tracking-tighter uppercase">Our Expertise.</h3>
-      </div>
-
-      <div ref={triggerRef} className="max-w-7xl mx-auto space-y-12">
+    <section className="bg-white py-20 px-4 md:px-8">
+      <div ref={containerRef} className=" mx-auto space-y-10">
         {expertiseData.map((item) => (
           <div 
             key={item.id}
-            className={`expertise-card w-full h-[60vh] md:h-[70vh] rounded-[40px] flex flex-col md:flex-row shadow-2xl overflow-hidden ${item.color.startsWith('bg') ? item.color : ''} ${item.textColor}`}
-            style={item.customBg}
+            className={`expertise-card relative w-full h-[500px] md:h-[650px] rounded-[45px] flex flex-col md:flex-row overflow-hidden shadow-2xl ${item.color} ${item.textColor}`}
           >
-            <div className="flex-1 p-10 md:p-20 flex flex-col justify-between">
+            {/* Background Number (Top Right) */}
+            <div className="absolute top-0 right-10 text-[180px] md:text-[150px] font-bold opacity-10 pointer-events-none leading-none select-none">
+              {item.id}
+            </div>
+
+            {/* Left Content Area */}
+            <div className="flex-1 p-8 md:p-16 flex flex-col justify-between z-10">
               <div>
-                <span className="text-4xl mb-6 block">{item.icon}</span>
-                <h4 className="text-5xl md:text-8xl font-bold uppercase tracking-tighter mb-6">{item.title}</h4>
-                <p className="text-lg md:text-xl max-w-md opacity-90">{item.description}</p>
+                <span className="inline-block bg-white/20 backdrop-blur-sm px-3 py-1 rounded-md text-xs font-bold uppercase tracking-wider mb-8">
+                  Expertise
+                </span>
+                <h2 className="text-7xl md:text-9xl font-bold tracking-tighter mb-10">
+                  {item.title}
+                </h2>
+                
+                <div className="space-y-4 max-w-sm">
+                  <h3 className="text-xl md:text-2xl font-bold leading-tight">
+                    {item.subtitle}
+                  </h3>
+                  <p className="text-lg opacity-85 leading-relaxed font-medium">
+                    {item.description}
+                  </p>
+                </div>
               </div>
-              
-              <button className="flex items-center gap-2 font-bold uppercase tracking-widest text-sm self-start group">
-                Learn more 
-                <div className="w-8 h-8 rounded-full border border-current flex items-center justify-center transition-transform group-hover:rotate-45">
-                  <ArrowUpRight size={16} />
+
+              {/* Styled Button from Image */}
+              <button className="flex items-center gap-3 bg-white text-black px-5 py-2.5 rounded-full w-fit font-bold text-sm transition-all hover:pr-4 group">
+                Meer over {item.title.toLowerCase()}
+                <div className="bg-black text-white rounded-full p-1.5 transition-transform group-hover:translate-x-1">
+                  <ArrowRight size={14} strokeWidth={3} />
                 </div>
               </button>
             </div>
-            
-            <div className="hidden md:block flex-1 bg-black/10 m-6 rounded-[32px] relative">
-              {/* Placeholder for visual/video */}
-              <div className="absolute inset-0 flex items-center justify-center text-current/20 font-bold text-2xl uppercase">
-                {item.title} Visual
+
+            {/* Right Visual Area */}
+            <div className="flex-1 relative flex items-center justify-end p-6 md:p-12 mt-20">
+              <div className="relative w-full h-full max-h-[700px] max-w-[350px] rounded-[30px] overflow-hidden border-[8px] border-white/10 shadow-2xl rotate-3 transition-transform hover:rotate-0 duration-500">
+                <img 
+                  src={item.imageUrl} 
+                  alt={item.title}
+                  className="w-full h-full object-cover"
+                />
               </div>
             </div>
           </div>
         ))}
       </div>
       
-      {/* Spacer for scroll depth if needed */}
+      {/* Spacer to allow the final card to sit for a moment */}
       <div className="h-[20vh]" />
     </section>
   );
